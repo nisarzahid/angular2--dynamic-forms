@@ -1,0 +1,69 @@
+    <div [formGroup]="form" style="margin: 2px;padding: 2px">
+      <!-- Label -->
+      <label *ngIf="getIsLabel(question.controlType)" 
+             [attr.for]="question.key">
+             {{question.label}}
+      </label>
+      
+      <!-- Input type -->
+      <div [ngSwitch]="question.controlType" >
+        
+        <div *ngSwitchCase="'group'" style="padding: 2px">
+            <!--<form #f="ngForm"                
+               >-->
+             <!-- [class.ng-invalid]="!getIsValid(f.valid,form.controls[question.key])" -->                   
+            <fieldset  [formGroup]="form.controls[question.key]">
+                <legend> {{question.label}} </legend>                
+                <div *ngFor="let q of  question.questions" class="row-margin">
+                  <df-question [question]="q" 
+                      [form]="form.controls[question.key]">                  
+                  </df-question>
+                </div>
+            </fieldset>
+            <!--</form>-->
+        </div>
+        
+        <input 
+            *ngSwitchCase="'textbox'" 
+            [formControlName]="question.key"
+            [id]="question.key" 
+            [type]="question.type">
+            
+        <div *ngSwitchCase="'checkbox'">
+             <input             
+                [formControlName]="question.key"
+                [id]="question.key" 
+                type="checkbox"> {{question.label}}
+        </div>
+        
+        <fieldset *ngSwitchCase="'radio'">
+            <legend>{{question.label}}</legend>
+            <template ngFor let-v [ngForOf]="question.options" >
+                <input
+                    [formControlName]="question.key"
+                    [name]="question.name" 
+                    type="radio" 
+                    [value]="v.value"> {{v.value}}<br>
+            </template>
+            
+        </fieldset>            
+        
+        <select 
+            [id]="question.key" 
+            *ngSwitchCase="'dropdown'" 
+            [formControlName]="question.key">
+          <option 
+                *ngFor="let opt of question.options" 
+                [value]="opt.key">
+                {{opt.value}}
+          </option>
+        </select>
+        
+      </div> 
+      
+      <!-- Errors Messages -->
+      <!--<div class="errorMessage" *ngIf="!isValid">
+        {{question.label}} is required
+      </div>-->
+      <div class="text-warning" *ngFor="let e of errors">{{e}}</div>
+    </div>
